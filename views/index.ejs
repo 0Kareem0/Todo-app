@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Apply theme before the page paints
+    const theme = localStorage.getItem('theme');
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
+  <meta charset="UTF-8">
+  <title>To-Do List</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #f2f4f8;
+      --container-bg: #ffffff;
+      --text-color: #000000;
+      --input-bg: #ffffff;
+      --border-color: #cccccc;
+      --task-bg: #f9fafb;
+      --button-bg: #4f46e5;
+      --button-hover: #4338ca;
+      --delete-bg: #ef4444;
+      --delete-hover: #dc2626;
+    }
+
+    .dark {
+      --bg-color: #111827;
+      --container-bg: #1f2937;
+      --text-color: #f3f4f6;
+      --input-bg: #374151;
+      --border-color: #4b5563;
+      --task-bg: #374151;
+      --button-bg: #6366f1;
+      --button-hover: #4f46e5;
+      --delete-bg: #f87171;
+      --delete-hover: #ef4444;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding-top: 50px;
+      transition: all 0.3s ease;
+    }
+
+    .container {
+      background: var(--container-bg);
+      padding: 30px 40px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+      transition: all 0.3s ease;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+      font-weight: 600;
+    }
+
+    .theme-toggle {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .theme-toggle-icon {
+  position: fixed; /* <- this is key */
+  top: 20px;
+  right: 25px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  z-index: 9999;
+  transition: transform 0.3s ease;
+}
+
+.theme-toggle-icon:hover {
+  transform: scale(1.2);
+}
+
+    form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      background: var(--input-bg);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 16px;
+      background-color: var(--button-bg);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: var(--button-hover);
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      background-color: var(--task-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .task-text {
+      flex: 1;
+      font-size: 16px;
+    }
+
+    .delete-form button {
+      background-color: var(--delete-bg);
+    }
+
+    .delete-form button:hover {
+      background-color: var(--delete-hover);
+    }
+
+    @media (max-width: 480px) {
+      form {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button id="toggle-theme" class="theme-toggle-icon" title="Toggle Theme">🌙</button>
+
+  <div class="container">
+    <h1>📝 My To-Do List</h1>
+
+    <form action="/add" method="POST">
+      <input type="text" name="task" placeholder="Enter a new task" required>
+      <button type="submit">Add</button>
+    </form>
+
+    <ul>
+      <% if (todos.length === 0) { %>
+        <li style="justify-content: center; color: #6b7280;">No tasks yet</li>
+      <% } %>
+
+      <% todos.forEach((task, i) => { %>
+        <li>
+          <span class="task-text"><%= task %></span>
+          <form action="/delete" method="POST" class="delete-form" style="margin: 0;">
+            <input type="hidden" name="index" value="<%= i %>">
+            <button type="submit">Delete</button>
+          </form>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+
+  <script>
+
+    
+    const toggleBtn = document.getElementById('toggle-theme');
+    const prefersDark = localStorage.getItem('theme') === 'dark';
+
+    if (prefersDark) {
+      document.body.classList.add('dark');
+      toggleBtn.textContent = '☀️';
+    }
+
+    toggleBtn.addEventListener('click', () => {
+      const isDark = document.body.classList.toggle('dark');
+      toggleBtn.textContent = isDark ? '☀️' : '🌙';
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>
